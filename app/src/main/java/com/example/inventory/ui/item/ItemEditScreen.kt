@@ -35,6 +35,8 @@ import com.example.inventory.R
 import com.example.inventory.ui.AppViewModelProvider
 import com.example.inventory.ui.navigation.NavigationDestination
 import com.example.inventory.ui.theme.InventoryTheme
+import kotlinx.coroutines.launch
+
 
 object ItemEditDestination : NavigationDestination {
     override val route = "item_edit"
@@ -64,8 +66,13 @@ fun ItemEditScreen(
     ) { innerPadding ->
         ItemEntryBody(
             itemUiState = viewModel.itemUiState,
-            onItemValueChange = { },
-            onSaveClick = { },
+            onItemValueChange = viewModel::updateUiState,
+            onSaveClick = {
+                coroutineScope.launch {
+                    viewModel.updateItem()
+                    navigateBack()
+                }
+            },
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
